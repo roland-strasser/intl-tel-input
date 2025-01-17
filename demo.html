@@ -1,97 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>International Telephone Input</title>
-    <link rel="stylesheet" href="build/css/intlTelInput.css" />
-    <link rel="stylesheet" href="build/css/demo.css" />
-  </head>
 
-  <body>
-    <h1>International Telephone Input</h1>
-    <form>
-      <input id="phone" name="phone" type="tel" value="" />
-      <button class="button" id="btn" type="button">Validate</button>
-      <span id="valid-msg" class="hide"></span>
-      <span id="error-msg" class="hide"></span>
-    </form>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>International Telephone Input</title>
+  <link rel="stylesheet" href="build/css/intlTelInput.css" />
+  <link rel="stylesheet" href="build/css/demo.css" />
+</head>
 
-    <script src="build/js/intlTelInputWithUtils.js"></script>
-    <script>
-      const input = document.querySelector("#phone");
-      const iti = window.intlTelInput(input, {
-        // allowDropdown: false,
-        // autoPlaceholder: "off",
-        // containerClass: "test",
-        // countryOrder: ["jp", "kr"],
-        // countrySearch: false,
-        // customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
-        //   return "e.g. " + selectedCountryPlaceholder;
-        // },
-        // dropdownContainer: document.querySelector('#custom-container'),
-        // excludeCountries: ["us"],
-        // fixDropdownWidth: false,
-        // formatAsYouType: false,
-        // formatOnDisplay: false,
-        // geoIpLookup: function(callback) {
-        //   fetch("https://ipapi.co/json")
-        //     .then(function(res) { return res.json(); })
-        //     .then(function(data) { callback(data.country_code); })
-        //     .catch(function() { callback(); });
-        // },
-        // hiddenInput: () => ({ phone: "phone_full", country: "country_code" }),
-        // i18n: { 'de': 'Deutschland' },
-        initialCountry: "us",
-        // loadUtils: () => import("/build/js/utils.js"), // leading slash (and http-server) required for this to work in chrome
-        // nationalMode: false,
-        // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-        // placeholderNumberType: "MOBILE",
-        // showFlags: false,
-        // separateDialCode: true,
-        // strictMode: true,
-        // useFullscreenPopup: true,
-        // validationNumberTypes: null,
-      });
-      window.iti = iti; // useful for testing
+<body>
+  <h1>International Telephone Input</h1>
+  <form>
+    <input id="phone" name="phone" type="tel" value="" />
+    <button class="button" id="btn" type="button">Validate</button>
+    <span id="valid-msg" class="hide"></span>
+    <span id="error-msg" class="hide"></span>
+  </form>
 
-      const button = document.querySelector("#btn");
-      const errorMsg = document.querySelector("#error-msg");
-      const validMsg = document.querySelector("#valid-msg");
-      const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+  <script src="build/js/intlTelInputWithUtils.js"></script>
+  <script>
+    const de = {
+      ad: "Andorra",
+      ae: "Vereinigte Arabische Emirate",
+      af: "Afghanistan",
+      ag: "Antigua und Barbuda",
+      ai: "Anguilla",
+      al: "Albanien",
+      am: "Armenien",
+      ao: "Angola",
+      ar: "Argentinien",
+      as: "Amerikanisch-Samoa",
+      at: "Österreich",
+      au: "Australien",
+      aw: "Aruba",
+      ax: "Ålandinseln",
+      az: "Aserbaidschan",
+      ba: "Bosnien und Herzegowina",
+      bb: "Barbados",
+      bd: "Bangladesch",
+      be: "Belgien",
+      bf: "Burkina Faso",
+      bg: "Bulgarien",
+      bh: "Bahrain",
+      bi: "Burundi",
+      bj: "Benin",
+      bl: "St. Barthélemy",
+      bm: "Bermuda",
+      bn: "Brunei Darussalam",
+      bo: "Bolivien",
+      bq: "Bonaire, Sint Eustatius und Saba",
+      br: "Brasilien",
+      bs: "Bahamas",
+      bt: "Bhutan",
+      bw: "Botsuana",
+      by: "Belarus",
+      bz: "Belize",
+      ca: "Kanada",
+      cc: "Kokosinseln",
+      cd: "Kongo-Kinshasa",
+      cf: "Zentralafrikanische Republik",
+      cg: "Kongo-Brazzaville",
+      ch: "Schweiz",
+      ci: "Côte d’Ivoire",
+      ck: "Cookinseln",
+      cl: "Chile",
+      cm: "Kamerun",
+      cn: "China",
+      co: "Kolumbien",
+      cr: "Costa Rica",
+      cu: "Kuba",
+      cv: "Cabo Verde",
+      cw: "Curaçao",
+      cx: "Weihnachtsinsel",
+      cy: "Zypern",
+      cz: "Tschechien",
+      de: "Deutschland",
+      dj: "Dschibuti",
+      dk: "Dänemark",
+      dm: "Dominica",
+      do: "Dominikanische Republik",
+      dz: "Algerien",
+      ec: "Ecuador",
+      ee: "Estland",
+      eg: "Ägypten",
+      eh: "Westsahara",
+      er: "Eritrea",
+      es: "Spanien",
+      et: "Äthiopien",
+      fi: "Finnland",
+      fj: "Fidschi",
+      fk: "Falklandinseln",
+      fm: "Mikronesien",
+      fo: "Färöer",
+      fr: "Frankreich",
+      ga: "Gabun",
+      gb: "Vereinigtes Königreich",
+      gd: "Grenada",
+      ge: "Georgien",
+      gf: "Französisch-Guayana",
+      gg: "Guernsey",
+      gh: "Ghana",
+      gi: "Gibraltar",
+      gl: "Grönland",
+      gm: "Gambia",
+      gn: "Guinea",
+      gp: "Guadeloupe",
+      gq: "Äquatorialguinea",
+      gr: "Griechenland",
+      gt: "Guatemala",
+      gu: "Guam",
+      gw: "Guinea-Bissau",
+      gy: "Guyana",
+      hk: "Sonderverwaltungsregion Hongkong",
+      hn: "Honduras",
+      hr: "Kroatien",
+      ht: "Haiti",
+      hu: "Ungarn",
+      id: "Indonesien",
+      ie: "Irland",
+      il: "Israel",
+      im: "Isle of Man",
+      in: "Indien",
+      io: "Britisches Territorium im Indischen Ozean",
+      iq: "Irak",
+      ir: "Iran",
+      is: "Island",
+      it: "Italien",
+      je: "Jersey",
+      jm: "Jamaika",
+      jo: "Jordanien",
+      jp: "Japan",
+      ke: "Kenia",
+      kg: "Kirgisistan",
+      kh: "Kambodscha",
+      ki: "Kiribati",
+      km: "Komoren",
+      kn: "St. Kitts und Nevis",
+      kp: "Nordkorea",
+      kr: "Südkorea",
+      kw: "Kuwait",
+      ky: "Kaimaninseln",
+      kz: "Kasachstan",
+      la: "Laos",
+      lb: "Libanon",
+      lc: "St. Lucia",
+      li: "Liechtenstein",
+      lk: "Sri Lanka",
+      lr: "Liberia",
+      ls: "Lesotho",
+      lt: "Litauen",
+      lu: "Luxemburg",
+      lv: "Lettland",
+      ly: "Libyen",
+      ma: "Marokko",
+      mc: "Monaco",
+      md: "Republik Moldau",
+      me: "Montenegro",
+      mf: "St. Martin",
+      mg: "Madagaskar",
+      mh: "Marshallinseln",
+      mk: "Nordmazedonien",
+      ml: "Mali",
+      mm: "Myanmar",
+      mn: "Mongolei",
+      mo: "Sonderverwaltungsregion Macau",
+      mp: "Nördliche Marianen",
+      mq: "Martinique",
+      mr: "Mauretanien",
+      ms: "Montserrat",
+      mt: "Malta",
+      mu: "Mauritius",
+      mv: "Malediven",
+      mw: "Malawi",
+      mx: "Mexiko",
+      my: "Malaysia",
+      mz: "Mosambik",
+      na: "Namibia",
+      nc: "Neukaledonien",
+      ne: "Niger",
+      nf: "Norfolkinsel",
+      ng: "Nigeria",
+      ni: "Nicaragua",
+      nl: "Niederlande",
+      no: "Norwegen",
+      np: "Nepal",
+      nr: "Nauru",
+      nu: "Niue",
+      nz: "Neuseeland",
+      om: "Oman",
+      pa: "Panama",
+      pe: "Peru",
+      pf: "Französisch-Polynesien",
+      pg: "Papua-Neuguinea",
+      ph: "Philippinen",
+      pk: "Pakistan",
+      pl: "Polen",
+      pm: "St. Pierre und Miquelon",
+      pr: "Puerto Rico",
+      ps: "Palästinensische Autonomiegebiete",
+      pt: "Portugal",
+      pw: "Palau",
+      py: "Paraguay",
+      qa: "Katar",
+      re: "Réunion",
+      ro: "Rumänien",
+      rs: "Serbien",
+      ru: "Russland",
+      rw: "Ruanda",
+      sa: "Saudi-Arabien",
+      sb: "Salomonen",
+      sc: "Seychellen",
+      sd: "Sudan",
+      se: "Schweden",
+      sg: "Singapur",
+      sh: "St. Helena",
+      si: "Slowenien",
+      sj: "Spitzbergen und Jan Mayen",
+      sk: "Slowakei",
+      sl: "Sierra Leone",
+      sm: "San Marino",
+      sn: "Senegal",
+      so: "Somalia",
+      sr: "Suriname",
+      ss: "Südsudan",
+      st: "São Tomé und Príncipe",
+      sv: "El Salvador",
+      sx: "Sint Maarten",
+      sy: "Syrien",
+      sz: "Eswatini",
+      tc: "Turks- und Caicosinseln",
+      td: "Tschad",
+      tg: "Togo",
+      th: "Thailand",
+      tj: "Tadschikistan",
+      tk: "Tokelau",
+      tl: "Timor-Leste",
+      tm: "Turkmenistan",
+      tn: "Tunesien",
+      to: "Tonga",
+      tr: "Türkei",
+      tt: "Trinidad und Tobago",
+      tv: "Tuvalu",
+      tw: "Taiwan",
+      tz: "Tansania",
+      ua: "Ukraine",
+      ug: "Uganda",
+      us: "Vereinigte Staaten",
+      uy: "Uruguay",
+      uz: "Usbekistan",
+      va: "Vatikanstadt",
+      vc: "St. Vincent und die Grenadinen",
+      ve: "Venezuela",
+      vg: "Britische Jungferninseln",
+      vi: "Amerikanische Jungferninseln",
+      vn: "Vietnam",
+      vu: "Vanuatu",
+      wf: "Wallis und Futuna",
+      ws: "Samoa",
+      ye: "Jemen",
+      yt: "Mayotte",
+      za: "Südafrika",
+      zm: "Sambia",
+      zw: "Simbabwe"
+    };
 
-      const reset = () => {
-        input.classList.remove("error");
-        errorMsg.innerHTML = "";
-        validMsg.innerHTML = "";
-        errorMsg.classList.add("hide");
-        validMsg.classList.add("hide");
-      };
 
-      const showError = (msg) => {
-        input.classList.add("error");
-        errorMsg.innerHTML = msg;
-        errorMsg.classList.remove("hide");
-      };
+    const input = document.querySelector("#phone");
+    const iti = window.intlTelInput(input, {
+      // allowDropdown: false,
+      // autoPlaceholder: "off",
+      // containerClass: "test",
+      // countryOrder: ["jp", "kr"],
+      // countrySearch: false,
+      searchTranslations: [{ 'at': "foobar" }, de],
+      // customPlaceholder: function(selectedCountryPlaceholder, selectedCountryData) {
+      //   return "e.g. " + selectedCountryPlaceholder;
+      // },
+      // dropdownContainer: document.querySelector('#custom-container'),
+      // excludeCountries: ["us"],
+      // fixDropdownWidth: false,
+      // formatAsYouType: false,
+      // formatOnDisplay: false,
+      // geoIpLookup: function(callback) {
+      //   fetch("https://ipapi.co/json")
+      //     .then(function(res) { return res.json(); })
+      //     .then(function(data) { callback(data.country_code); })
+      //     .catch(function() { callback(); });
+      // },
+      // hiddenInput: () => ({ phone: "phone_full", country: "country_code" }),
+      // i18n: { 'de': 'Deutschland' },
+      initialCountry: "us",
+      // loadUtils: () => import("/build/js/utils.js"), // leading slash (and http-server) required for this to work in chrome
+      // nationalMode: false,
+      // onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+      // placeholderNumberType: "MOBILE",
+      // showFlags: false,
+      // separateDialCode: true,
+      // strictMode: true,
+      // useFullscreenPopup: true,
+      // validationNumberTypes: null,
+    });
+    window.iti = iti; // useful for testing
 
-      // on click button: validate
-      button.addEventListener('click', () => {
-        reset();
-        if (!input.value.trim()) {
-          showError("Required");
-        } else if (iti.isValidNumber()) {
-          validMsg.innerHTML = "Valid number: " + iti.getNumber();
-          validMsg.classList.remove("hide");
-        } else {
-          const errorCode = iti.getValidationError();
-          const msg = errorMap[errorCode] || "Invalid number";
-          showError(msg);
-        }
-      });
+    const button = document.querySelector("#btn");
+    const errorMsg = document.querySelector("#error-msg");
+    const validMsg = document.querySelector("#valid-msg");
+    const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
 
-      // on keyup / change flag: reset
-      input.addEventListener('change', reset);
-      input.addEventListener('keyup', reset);
-    </script>
-  </body>
+    const reset = () => {
+      input.classList.remove("error");
+      errorMsg.innerHTML = "";
+      validMsg.innerHTML = "";
+      errorMsg.classList.add("hide");
+      validMsg.classList.add("hide");
+    };
+
+    const showError = (msg) => {
+      input.classList.add("error");
+      errorMsg.innerHTML = msg;
+      errorMsg.classList.remove("hide");
+    };
+
+    // on click button: validate
+    button.addEventListener('click', () => {
+      reset();
+      if (!input.value.trim()) {
+        showError("Required");
+      } else if (iti.isValidNumber()) {
+        validMsg.innerHTML = "Valid number: " + iti.getNumber();
+        validMsg.classList.remove("hide");
+      } else {
+        const errorCode = iti.getValidationError();
+        const msg = errorMap[errorCode] || "Invalid number";
+        showError(msg);
+      }
+    });
+
+    // on keyup / change flag: reset
+    input.addEventListener('change', reset);
+    input.addEventListener('keyup', reset);
+  </script>
+</body>
+
 </html>

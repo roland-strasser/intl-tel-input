@@ -7,7 +7,7 @@ for (let i = 0; i < allCountries.length; i++) {
   allCountries[i].name = defaultEnglishStrings[allCountries[i].iso2];
 }
 
-type UtilsLoader = () => Promise<{default: ItiUtils}>;
+type UtilsLoader = () => Promise<{ default: ItiUtils }>;
 
 interface IntlTelInputInterface {
   (input: HTMLInputElement, options?: SomeOptions): Iti;
@@ -63,6 +63,7 @@ interface AllOptions {
   containerClass: string;
   countryOrder: string[];
   countrySearch: boolean;
+  searchTranslations: I18n[];
   customPlaceholder: ((selectedCountryPlaceholder: string, selectedCountryData: object) => string) | null;
   dropdownContainer: HTMLElement | null;
   excludeCountries: string[];
@@ -70,7 +71,7 @@ interface AllOptions {
   formatAsYouType: boolean;
   formatOnDisplay: boolean;
   geoIpLookup: ((success: (iso2: string) => void, failure: () => void) => void) | null;
-  hiddenInput: ((telInputName: string) => {phone: string, country?: string}) | null;
+  hiddenInput: ((telInputName: string) => { phone: string, country?: string }) | null;
   i18n: I18n,
   initialCountry: string;
   loadUtils: UtilsLoader;
@@ -100,6 +101,8 @@ const defaults: AllOptions = {
   countryOrder: null,
   //* Add a country search input at the top of the dropdown.
   countrySearch: true,
+
+  searchTranslations: [],
   //* Modify the auto placeholder.
   customPlaceholder: null,
   //* Append menu to specified element.
@@ -138,10 +141,10 @@ const defaults: AllOptions = {
   useFullscreenPopup:
     typeof navigator !== "undefined" && typeof window !== "undefined"
       ? //* We cannot just test screen size as some smartphones/website meta tags will report desktop resolutions.
-        //* Note: to target Android Mobiles (and not Tablets), we must find 'Android' and 'Mobile'
-        /Android.+Mobile|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent,
-        ) || window.innerWidth <= 500
+      //* Note: to target Android Mobiles (and not Tablets), we must find 'Android' and 'Mobile'
+      /Android.+Mobile|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent,
+      ) || window.innerWidth <= 500
       : false,
   //* The number type to enforce during validation.
   validationNumberTypes: ["MOBILE"],
@@ -930,7 +933,7 @@ export class Iti {
         //* Catch and ignore any errors to prevent unhandled-promise failures.
         //* The error from `attachUtils()` is also surfaced in each instance's
         //* `promise` property, so it's not getting lost by being ignored here.
-        intlTelInput.attachUtils(loadUtils)?.catch(() => {});
+        intlTelInput.attachUtils(loadUtils)?.catch(() => { });
       };
 
       //* If the plugin is being initialised after the window.load event has already been fired.
@@ -1188,7 +1191,7 @@ export class Iti {
 
     //* Listen for country selection.
     this._handleClickCountryList = (e): void => {
-    const listItem: HTMLElement | null = (e.target as HTMLElement)?.closest(".iti__country");
+      const listItem: HTMLElement | null = (e.target as HTMLElement)?.closest(".iti__country");
       if (listItem) {
         this._selectListItem(listItem);
       }
@@ -1298,21 +1301,26 @@ export class Iti {
 
   //* Country search enabled: Filter the countries according to the search query.
   private _filterCountries(query: string, isReset: boolean = false): void {
+    const t1 = performance.now();
     let noCountriesAddedYet = true;
     this.countryList.innerHTML = "";
+
     const normalisedQuery = normaliseString(query);
+
     for (let i = 0; i < this.countries.length; i++) {
       const c = this.countries[i];
       const normalisedCountryName = normaliseString(c.name);
       //* Initials: split on non-alpha chars (ignore ampersand, hyphen, dot etc) and take the first letter of each part.
       const countryInitials = c.name.split(/[^a-zA-ZÀ-ÿа-яА-Я]/).map(word => word[0]).join("").toLowerCase();
       const fullDialCode = `+${c.dialCode}`;
+
       if (
         isReset ||
         normalisedCountryName.includes(normalisedQuery) ||
         fullDialCode.includes(normalisedQuery) ||
         c.iso2.includes(normalisedQuery) ||
-        countryInitials.includes(normalisedQuery)
+        countryInitials.includes(normalisedQuery) ||
+        this._foundMatchingTranslation(c, normalisedQuery)
       ) {
         const listItem = c.nodeById[this.id];
         if (listItem) {
@@ -1332,6 +1340,22 @@ export class Iti {
     //* Scroll to top (useful if user had previously scrolled down).
     this.countryList.scrollTop = 0;
     this._updateSearchResultsText();
+
+    const t2 = performance.now();
+    console.info("took:", t2 - t1, "ms");
+  }
+
+  _foundMatchingTranslation(country: Country, normalisedQuery: string) {
+    for (const translation of this.options.searchTranslations) {
+      const translatedName = translation[country.iso2];
+      if (translatedName) {
+        const normalizedName = normaliseString(translatedName);
+        if (normalizedName.includes(normalisedQuery)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   //* Update search results text (for a11y).
@@ -1681,10 +1705,10 @@ export class Iti {
       //* Note: Must set placeholder to empty string if no country selected (globe icon showing).
       let placeholder = this.selectedCountryData.iso2
         ? intlTelInput.utils.getExampleNumber(
-            this.selectedCountryData.iso2,
-            nationalMode,
-            numberType,
-          )
+          this.selectedCountryData.iso2,
+          nationalMode,
+          numberType,
+        )
         : "";
 
       placeholder = this._beforeSetNumber(placeholder);
