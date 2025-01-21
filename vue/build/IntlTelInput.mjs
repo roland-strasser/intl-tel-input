@@ -1,5 +1,5 @@
-import { mergeModels as D, useModel as x, ref as L, onMounted as E, watch as M, onUnmounted as F, withDirectives as B, openBlock as V, createElementBlock as z, mergeProps as O, vModelText as R } from "vue";
-const N = [
+import { mergeModels as N, useModel as x, ref as L, onMounted as E, watch as M, onUnmounted as F, withDirectives as B, openBlock as V, createElementBlock as z, mergeProps as O, vModelText as R } from "vue";
+const A = [
   [
     "af",
     // Afghanistan
@@ -1323,8 +1323,8 @@ const N = [
     "263"
   ]
 ], I = [];
-for (let u = 0; u < N.length; u++) {
-  const t = N[u];
+for (let u = 0; u < A.length; u++) {
+  const t = A[u];
   I[u] = {
     name: "",
     // this is now populated in the plugin
@@ -1605,6 +1605,7 @@ const T = {
   countryOrder: null,
   //* Add a country search input at the top of the dropdown.
   countrySearch: !0,
+  searchTranslations: [],
   //* Modify the auto placeholder.
   customPlaceholder: null,
   //* Append menu to specified element.
@@ -1667,7 +1668,7 @@ const T = {
   "887",
   "888",
   "889"
-], v = (u) => u.replace(/\D/g, ""), A = (u = "") => u.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(), S = (u) => {
+], v = (u) => u.replace(/\D/g, ""), D = (u = "") => u.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(), S = (u) => {
   const t = v(u);
   if (t.charAt(0) === "1") {
     const e = t.substr(1, 3);
@@ -2103,15 +2104,23 @@ class G {
   _filterCountries(t, e = !1) {
     let i = !0;
     this.countryList.innerHTML = "";
-    const s = A(t);
+    const s = D(t);
     for (let n = 0; n < this.countries.length; n++) {
-      const o = this.countries[n], r = A(o.name), a = o.name.split(/[^a-zA-ZÀ-ÿа-яА-Я]/).map((d) => d[0]).join("").toLowerCase(), c = `+${o.dialCode}`;
-      if (e || r.includes(s) || c.includes(s) || o.iso2.includes(s) || a.includes(s)) {
+      const o = this.countries[n], r = D(o.name), a = o.name.split(/[^a-zA-ZÀ-ÿа-яА-Я]/).map((d) => d[0]).join("").toLowerCase(), c = `+${o.dialCode}`;
+      if (e || r.includes(s) || c.includes(s) || o.iso2.includes(s) || a.includes(s) || this._foundMatchingTranslation(o, s)) {
         const d = o.nodeById[this.id];
         d && this.countryList.appendChild(d), i && (this._highlightListItem(d, !1), i = !1);
       }
     }
     i && this._highlightListItem(null, !1), this.countryList.scrollTop = 0, this._updateSearchResultsText();
+  }
+  _foundMatchingTranslation(t, e) {
+    for (const i of this.options.searchTranslations) {
+      const s = i[t.iso2];
+      if (s && D(s).includes(e))
+        return !0;
+    }
+    return !1;
   }
   //* Update search results text (for a11y).
   _updateSearchResultsText() {
@@ -2533,7 +2542,7 @@ const W = (u) => {
   }
 ), J = {
   __name: "IntlTelInput",
-  props: /* @__PURE__ */ D({
+  props: /* @__PURE__ */ N({
     disabled: {
       type: Boolean,
       default: !1
@@ -2557,7 +2566,7 @@ const W = (u) => {
     },
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ D([
+  emits: /* @__PURE__ */ N([
     "changeNumber",
     "changeCountry",
     "changeValidity",

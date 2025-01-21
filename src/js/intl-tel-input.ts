@@ -1301,7 +1301,6 @@ export class Iti {
 
   //* Country search enabled: Filter the countries according to the search query.
   private _filterCountries(query: string, isReset: boolean = false): void {
-    const t1 = performance.now();
     let noCountriesAddedYet = true;
     this.countryList.innerHTML = "";
 
@@ -1340,12 +1339,9 @@ export class Iti {
     //* Scroll to top (useful if user had previously scrolled down).
     this.countryList.scrollTop = 0;
     this._updateSearchResultsText();
-
-    const t2 = performance.now();
-    console.info("took:", t2 - t1, "ms");
   }
 
-  _foundMatchingTranslation(country: Country, normalisedQuery: string) {
+  private _foundMatchingTranslation(country: Country, normalisedQuery: string) {
     for (const translation of this.options.searchTranslations) {
       const translatedName = translation[country.iso2];
       if (translatedName) {

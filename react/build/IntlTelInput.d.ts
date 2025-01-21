@@ -338,6 +338,7 @@ declare module "intl-tel-input" {
         containerClass: string;
         countryOrder: string[];
         countrySearch: boolean;
+        searchTranslations: I18n[];
         customPlaceholder: ((selectedCountryPlaceholder: string, selectedCountryData: object) => string) | null;
         dropdownContainer: HTMLElement | null;
         excludeCountries: string[];
@@ -436,6 +437,7 @@ declare module "intl-tel-input" {
         private _bindDropdownListeners;
         private _searchForCountry;
         private _filterCountries;
+        private _foundMatchingTranslation;
         private _updateSearchResultsText;
         private _handleUpDownKey;
         private _handleEnterKey;

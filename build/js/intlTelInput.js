@@ -2498,7 +2498,6 @@ var factoryOutput = (() => {
     }
     //* Country search enabled: Filter the countries according to the search query.
     _filterCountries(query, isReset = false) {
-      const t1 = performance.now();
       let noCountriesAddedYet = true;
       this.countryList.innerHTML = "";
       const normalisedQuery = normaliseString(query);
@@ -2523,8 +2522,6 @@ var factoryOutput = (() => {
       }
       this.countryList.scrollTop = 0;
       this._updateSearchResultsText();
-      const t2 = performance.now();
-      console.info("took:", t2 - t1, "ms");
     }
     _foundMatchingTranslation(country, normalisedQuery) {
       for (const translation of this.options.searchTranslations) {

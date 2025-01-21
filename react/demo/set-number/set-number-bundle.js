@@ -25208,6 +25208,7 @@
     countryOrder: null,
     //* Add a country search input at the top of the dropdown.
     countrySearch: true,
+    searchTranslations: [],
     //* Modify the auto placeholder.
     customPlaceholder: null,
     //* Append menu to specified element.
@@ -26051,7 +26052,7 @@
         const normalisedCountryName = normaliseString(c.name);
         const countryInitials = c.name.split(/[^a-zA-ZÀ-ÿа-яА-Я]/).map((word) => word[0]).join("").toLowerCase();
         const fullDialCode = `+${c.dialCode}`;
-        if (isReset || normalisedCountryName.includes(normalisedQuery) || fullDialCode.includes(normalisedQuery) || c.iso2.includes(normalisedQuery) || countryInitials.includes(normalisedQuery)) {
+        if (isReset || normalisedCountryName.includes(normalisedQuery) || fullDialCode.includes(normalisedQuery) || c.iso2.includes(normalisedQuery) || countryInitials.includes(normalisedQuery) || this._foundMatchingTranslation(c, normalisedQuery)) {
           const listItem = c.nodeById[this.id];
           if (listItem) {
             this.countryList.appendChild(listItem);
@@ -26067,6 +26068,18 @@
       }
       this.countryList.scrollTop = 0;
       this._updateSearchResultsText();
+    }
+    _foundMatchingTranslation(country, normalisedQuery) {
+      for (const translation of this.options.searchTranslations) {
+        const translatedName = translation[country.iso2];
+        if (translatedName) {
+          const normalizedName = normaliseString(translatedName);
+          if (normalizedName.includes(normalisedQuery)) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
     //* Update search results text (for a11y).
     _updateSearchResultsText() {
