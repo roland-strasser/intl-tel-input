@@ -3,16 +3,16 @@ const path = require('path');
 const sharp = require('sharp');
 const supportedCountries = require('../build/js/data.js');
 
-module.exports = function(grunt) {
-  grunt.registerTask('generate-sprite', async function() {
+module.exports = function (grunt) {
+  grunt.registerTask('generate-sprite', async function () {
     const supportedFilenames = supportedCountries.map(country => `${country.iso2}.svg`).sort();
     const done = this.async();
 
     // customise this number to change the size of the flags (NOTE: flags are 4x3 ratio)
-    const TARGET_HEIGHT = 12;
+    const TARGET_HEIGHT = 12 * 2;
 
     const TARGET_WIDTH = (TARGET_HEIGHT / 3) * 4;
-    const FLAG_MARGIN = 0;
+    const FLAG_MARGIN = 1;
 
     const specialCases = {
       'ac.svg': 'sh-ac.svg', // Ascension Island
