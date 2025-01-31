@@ -14,6 +14,12 @@ module.exports = function (grunt) {
     const TARGET_WIDTH = (TARGET_HEIGHT / 3) * 4;
     const FLAG_MARGIN = 1;
 
+    // TARGET_HEIGHT -> 1em
+    function pxToEm(px) {
+      return px / TARGET_HEIGHT;
+    }
+
+
     const specialCases = {
       'ac.svg': 'sh-ac.svg', // Ascension Island
       // Add more special cases here if needed
@@ -87,7 +93,7 @@ module.exports = function (grunt) {
           });
 
           flagsMetadata += `  ${countryCode}: (\n`;
-          flagsMetadata += `    offset: ${-currentOffset}px,\n`;
+          flagsMetadata += `    offset: ${-pxToEm(currentOffset)}em,\n`;
           flagsMetadata += "  ),\n";
 
           currentOffset += TARGET_WIDTH + FLAG_MARGIN;
@@ -108,12 +114,12 @@ module.exports = function (grunt) {
         outputFileContent += fileWarning + "\n\n";
 
         outputFileContent += `$flags-sprite-1x: (\n`;
-        outputFileContent += `  height: ${maxHeight}px,\n`;
-        outputFileContent += `  width: ${totalWidth}px,\n`;
+        outputFileContent += `  height: ${pxToEm(maxHeight)}em,\n`;
+        outputFileContent += `  width: ${pxToEm(totalWidth)}em,\n`;
         outputFileContent += ");\n\n";
 
-        outputFileContent += `$flag-width: ${TARGET_WIDTH}px;\n\n`;
-        outputFileContent += `$flag-height: ${TARGET_HEIGHT}px;\n\n`;
+        outputFileContent += `$flag-width: ${pxToEm(TARGET_WIDTH)}em;\n\n`;
+        outputFileContent += `$flag-height: ${pxToEm(TARGET_HEIGHT)}em;\n\n`;
 
         outputFileContent += flagsMetadata + "\n\n";
         outputFileContent += fileWarning + "\n";
